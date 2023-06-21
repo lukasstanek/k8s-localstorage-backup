@@ -43,4 +43,4 @@ jobs:
       - name: Push image
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/pull/1/merge'
         run: |
-          docker push ghcr.io /lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }}
+          docker push ghcr.io/lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }}
