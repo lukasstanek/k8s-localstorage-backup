@@ -37,7 +37,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t ghcr.io /lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }} .
+          docker build -t ghcr.io/lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }} .
           echo "::notice::Built image version: ${{ steps.versioner.outputs.IMAGE_VERSION }}"
 
       - name: Push image
