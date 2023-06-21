@@ -53,7 +53,8 @@ func main() {
 			if pv.Name == "pvc-01100b40-61f9-4166-a904-c39437696f39" {
 				fmt.Printf("Backing up...")
 				//Tar(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s", backupTimestamp))
-				err := CopyDirectory(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s", backupTimestamp, pv.Name))
+				//err := CopyDirectory(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s", backupTimestamp, pv.Name))
+				err := compress(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s.tar.gz", backupTimestamp, pv.Name))
 				if err != nil {
 					fmt.Printf("Error: %s\n", err)
 					return
