@@ -60,6 +60,7 @@ func Tar(source, target string) error {
 	target = filepath.Join(target, fmt.Sprintf("%s.tar", filename))
 	tarfile, err := os.Create(target)
 	if err != nil {
+		fmt.Printf("Error: %s\n", err)
 		return err
 	}
 	defer tarfile.Close()
