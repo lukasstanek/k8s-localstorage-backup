@@ -50,17 +50,16 @@ func main() {
 	for _, pv := range pvList.Items {
 		if pv.Spec.StorageClassName == specificStorageClass {
 			fmt.Printf("PersistentVolume: %s, Claim: %s/%s, Path: %s\n", pv.Name, pv.Spec.ClaimRef.Namespace, pv.Spec.ClaimRef.Name, pv.Spec.HostPath.Path)
-			if pv.Name == "pvc-01100b40-61f9-4166-a904-c39437696f39" {
-				fmt.Printf("Backing up...")
-				//Tar(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s", backupTimestamp))
-				//err := CopyDirectory(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s", backupTimestamp, pv.Name))
-				err := compress(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s.tar.gz", backupTimestamp, filepath.Base(pv.Spec.HostPath.Path)))
-				if err != nil {
-					fmt.Printf("Error: %s\n", err)
-					return
-				}
-				fmt.Printf("Finished")
+			fmt.Printf("Backing up...")
+			//Tar(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s", backupTimestamp))
+			//err := CopyDirectory(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s", backupTimestamp, pv.Name))
+			err := compress(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s.tar.gz", backupTimestamp, filepath.Base(pv.Spec.HostPath.Path)))
+			if err != nil {
+				fmt.Printf("Error: %s\n", err)
+				return
 			}
+			fmt.Printf("Finished")
+
 		}
 
 	}

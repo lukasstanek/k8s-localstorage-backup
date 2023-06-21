@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-// const BufferSize = 104857600 // You can adjust this value to fit your needs
-const BufferSize = 1024 // You can adjust this value to fit your needs
+const BufferSize = 104857600 // You can adjust this value to fit your needs
+//const BufferSize = 1024 // You can adjust this value to fit your needs
 
 func compress(src string, outFileName string) error {
 	// tar > gzip > outFile
