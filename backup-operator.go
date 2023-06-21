@@ -27,21 +27,16 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	for {
-		// get pods in all the namespaces by omitting namespace
-		// Or specify namespace to get pods in particular namespace
 
-		pvList, err := clientset.CoreV1().PersistentVolumes().List(context.Background(), v1.ListOptions{})
-		if err != nil {
-			panic(err.Error())
+	pvList, err := clientset.CoreV1().PersistentVolumes().List(context.Background(), v1.ListOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	specificStorageClass := "local-path"
+	for _, pv := range pvList.Items {
+		if pv.Spec.StorageClassName == specificStorageClass {
+			fmt.Printf("PersistentVolume: %s, Claim: %s/%s, Path: %s\n", pv.Name, pv.Spec.ClaimRef.Namespace, pv.Spec.ClaimRef.Name, pv.Spec.HostPath.Path)
 		}
-
-		specificStorageClass := "local-path"
-		for _, pv := range pvList.Items {
-			if pv.Spec.StorageClassName == specificStorageClass {
-				fmt.Printf("PersistentVolume: %s, Claim: %s/%s\n", pv.Name, pv.Spec.ClaimRef.Namespace, pv.Spec.ClaimRef.Name)
-			}
-		}
-
 	}
 }
