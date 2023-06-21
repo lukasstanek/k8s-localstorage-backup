@@ -43,7 +43,7 @@ func main() {
 
 	specificStorageClass := "local-path"
 	backupTimestamp := time.Now().Format(time.RFC3339)
-	os.Mkdir(fmt.Sprintf("/backup/%s", backupTimestamp))
+	os.Mkdir(fmt.Sprintf("/backup/%s", backupTimestamp), os.ModePerm)
 	for _, pv := range pvList.Items {
 		if pv.Spec.StorageClassName == specificStorageClass {
 			fmt.Printf("PersistentVolume: %s, Claim: %s/%s, Path: %s\n", pv.Name, pv.Spec.ClaimRef.Namespace, pv.Spec.ClaimRef.Name, pv.Spec.HostPath.Path)
