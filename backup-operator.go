@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -59,7 +60,7 @@ func main() {
 
 func Tar(source, target string) error {
 	filename := filepath.Base(source)
-	target = filepath.Join(target, fmt.Sprintf("%s.tar", filename))
+	target = filepath.Join(target, fmt.Sprintf("%s.tar.gz", filename))
 	tarfile, err := os.Create(target)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
@@ -67,7 +68,13 @@ func Tar(source, target string) error {
 	}
 	defer tarfile.Close()
 
-	tarball := tar.NewWriter(tarfile)
+	writer, err := gzip.NewWriterLevel(tarfile, gzip.BestCompression)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return err
+	}
+
+	tarball := tar.NewWriter(writer)
 	defer tarball.Close()
 
 	info, err := os.Stat(source)
