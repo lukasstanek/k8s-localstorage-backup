@@ -29,7 +29,8 @@ func compress(src string, outFileName string) error {
 
 		// must provide real name
 		// (see https://golang.org/src/archive/tar/common.go?#L626)
-		header.Name = filepath.ToSlash(file)
+
+		header.Name = filepath.Base(file)
 
 		// write header
 		if err := tw.WriteHeader(header); err != nil {
