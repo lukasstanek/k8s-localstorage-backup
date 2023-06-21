@@ -69,6 +69,7 @@ func Tar(source, target string) error {
 
 	info, err := os.Stat(source)
 	if err != nil {
+		fmt.Printf("Source error: %s\n", err)
 		return nil
 	}
 
@@ -80,10 +81,12 @@ func Tar(source, target string) error {
 	return filepath.Walk(source,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
+				fmt.Printf("Error: %s\n", err)
 				return err
 			}
 			header, err := tar.FileInfoHeader(info, info.Name())
 			if err != nil {
+				fmt.Printf("Error: %s\n", err)
 				return err
 			}
 
@@ -92,19 +95,23 @@ func Tar(source, target string) error {
 			}
 
 			if err := tarball.WriteHeader(header); err != nil {
+				fmt.Printf("Error: %s\n", err)
 				return err
 			}
 
 			if info.IsDir() {
+				fmt.Printf("Error: %s\n", err)
 				return nil
 			}
 
 			file, err := os.Open(path)
 			if err != nil {
+				fmt.Printf("Error: %s\n", err)
 				return err
 			}
 			defer file.Close()
 			_, err = io.Copy(tarball, file)
+			fmt.Printf("Error: %s\n", err)
 			return err
 		})
 }
