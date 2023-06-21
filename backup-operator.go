@@ -54,7 +54,7 @@ func main() {
 				fmt.Printf("Backing up...")
 				//Tar(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s", backupTimestamp))
 				//err := CopyDirectory(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s", backupTimestamp, pv.Name))
-				err := compress(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s.tar.gz", backupTimestamp, pv.Name))
+				err := compress(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s/%s.tar.gz", backupTimestamp, filepath.Base(pv.Spec.HostPath.Path)))
 				if err != nil {
 					fmt.Printf("Error: %s\n", err)
 					return
