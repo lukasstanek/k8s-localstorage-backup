@@ -18,6 +18,10 @@ import (
 	// _ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 
 	"archive/tar"
+	"io"
+	"os"
+	"strings"
+	"time"
 )
 
 func main() {
