@@ -26,8 +26,6 @@ jobs:
 
       - name: Extract release version
         run: |
-#          TAG=$(echo $GITHUB_REF | grep -o "[0-9][\.].*")
-#          echo Imag teg is: $TAG
           VERSION=${{ github.run_id }}
           echo "::set-output name=IMAGE_VERSION::$VERSION"
         id: versioner
