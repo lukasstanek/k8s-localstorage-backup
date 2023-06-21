@@ -1,0 +1,51 @@
+name: "Build-Publish"
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**'
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+    branches: [ main ]
+    paths:
+      - '**'
+
+  workflow_dispatch:
+
+jobs:
+  build-push:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract release version
+        run: |
+          TAG=$(echo $GITHUB_REF | grep -o "[0-9][\.].*")
+          echo Imag teg is: $TAG
+          VERSION=$TAG
+          echo "::set-output name=IMAGE_VERSION::$VERSION"
+        id: versioner
+
+      - name: Log in to registry
+        # This is where you will update the personal access token to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+
+      - name: Build image
+        run: |
+          docker build -t ghcr.io /lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }} .
+          echo "::notice::Built image version: ${{ steps.versioner.outputs.IMAGE_VERSION }}"
+
+      - name: Push image
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/pull/1/merge'
+        run: |
+          docker push ghcr.io /lukasstanek/k8s-localvolume-backup-operator:${{ steps.versioner.outputs.IMAGE_VERSION }}
