@@ -6,6 +6,8 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	filepath "path/filepath"
+
 	//
 	// Uncomment to load all auth plugins
 	// _ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -14,6 +16,8 @@ import (
 	// _ "k8s.io/client-go/plugin/pkg/client/auth/azure"
 	// _ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	// _ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
+
+	"archive/tar"
 )
 
 func main() {
@@ -37,9 +41,9 @@ func main() {
 	for _, pv := range pvList.Items {
 		if pv.Spec.StorageClassName == specificStorageClass {
 			fmt.Printf("PersistentVolume: %s, Claim: %s/%s, Path: %s\n", pv.Name, pv.Spec.ClaimRef.Namespace, pv.Spec.ClaimRef.Name, pv.Spec.HostPath.Path)
-			if pv.Spec.Name == "pvc-01100b40-61f9-4166-a904-c39437696f39" {
+			if pv.Name == "pvc-01100b40-61f9-4166-a904-c39437696f39" {
 				fmt.Printf("Backing up...")
-				Tar(fmt.Printf("/host%s", pv.Spec.HostPath.Path), fmt.Printf("/backup/%s", time.Now().Format(time.RFC3339)))
+				Tar(fmt.Sprintf("/host%s", pv.Spec.HostPath.Path), fmt.Sprintf("/backup/%s", time.Now().Format(time.RFC3339)))
 				fmt.Printf("Finished")
 			}
 		}
