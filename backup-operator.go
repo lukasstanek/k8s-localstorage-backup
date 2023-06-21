@@ -103,7 +103,6 @@ func Tar(source, target string) error {
 			}
 
 			if info.IsDir() {
-				fmt.Printf("Error: %s\n", err)
 				return nil
 			}
 
@@ -114,7 +113,9 @@ func Tar(source, target string) error {
 			}
 			defer file.Close()
 			_, err = io.Copy(tarball, file)
-			fmt.Printf("Error: %s\n", err)
+			if err != nil {
+				fmt.Printf("Error: %s\n", err)
+			}
 			return err
 		})
 }
