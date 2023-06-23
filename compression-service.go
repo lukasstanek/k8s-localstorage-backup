@@ -7,10 +7,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
-const BufferSize = 104857600 // You can adjust this value to fit your needs
+const BufferSize = 104857600 // 100mb chunks
 //const BufferSize = 1024 // You can adjust this value to fit your needs
 
 func compress(src string, outFileName string) error {
@@ -85,12 +84,4 @@ func compress(src string, outFileName string) error {
 	}
 	//
 	return nil
-}
-
-// check for path traversal and correct forward slashes
-func validRelPath(p string) bool {
-	if p == "" || strings.Contains(p, `\`) || strings.HasPrefix(p, "/") || strings.Contains(p, "../") {
-		return false
-	}
-	return true
 }

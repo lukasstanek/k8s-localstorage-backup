@@ -1,0 +1,87 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cronjob
+  namespace: kube-system
+spec:
+  #schedule: "*/5 * * * *"
+  schedule: "0 0 * * *"  # Run daily at midnight
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup-container
+              image: ghcr.io/lukasstanek/k8s-localvolume-backup-operator:5339274260
+              securityContext:
+                allowPrivilegeEscalation: true
+                capabilities:
+                  add:
+                    - ALL
+                privileged: true
+              volumeMounts:
+                - mountPath: /host
+                  name: host
+                - name: backup
+                  mountPath: /backup
+          serviceAccountName: volume-backup
+          restartPolicy: OnFailure
+          volumes:
+            - hostPath:
+                path: /
+                type: ''
+              name: host
+            - name: backup
+              persistentVolumeClaim:
+                claimName: local-volumes-backup-volume
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-volumes-backup-volume
+  namespace: kube-system
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: azurefile-csi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: volume-backup
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: volume-reader
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    #
+    # at the HTTP level, the name of the resource for accessing Secret
+    # objects is "secrets"
+    resources: ["persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: read-volumes-global
+  namespace: kube-system
+subjects:
+  - kind: ServiceAccount
+    name: volume-backup # Name is case sensitive
+    namespace: kube-system
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: volume-reader
+  apiGroup: ""
